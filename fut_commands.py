@@ -1,6 +1,7 @@
 # Gold, Silver, Bronze Pack
 # Update pack price
 # Sell card
+# Sell all cards in pack
 # My cards
 # Card leaderboard
 

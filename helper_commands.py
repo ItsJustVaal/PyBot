@@ -13,8 +13,17 @@ def test(ctx: commands.Context) -> discord.Embed: # type: ignore
     embed.add_field(name="TEST", value=f"YOU CALLED TEST WITH ARGS {ctx.message.content.split(sep=" ")[1:]}")
     return embed
 
-def help(ctx: commands.Context): # type: ignore
+def commandsList(ctx: commands.Context): # type: ignore
     pass
 
 def join(ctx: commands.Context): # type: ignore
     pass
+
+
+def admin_check(ctx: commands.Context) -> discord.Embed | bool: # type: ignore
+    embed = discord.Embed()
+    if ctx.author != '':
+        embed.add_field(name="ADMIN", value=f"YOU ARE NOT AN ADMIN YOU NERD")
+        return embed
+    else:
+        return True
