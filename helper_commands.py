@@ -1,3 +1,4 @@
+import sqlite3
 import discord
 from discord.ext import commands
 
@@ -23,8 +24,25 @@ def cmds(ctx: commands.Context) -> discord.Embed: # type: ignore
 
     return embed
 
-def join(ctx: commands.Context): # type: ignore
-    pass
+def join(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.invoked_subcommand}")
+    
+    embed = discord.Embed()
+    check = True
+    try:
+        cursor.execute(f"INSERT INTO members VALUES({ctx.author.id}, 0, 0, 0, 2)")
+    except:
+        check = False
+        
+    if check:
+        embed.add_field(name="JOIN", value="YOU JOINED! Type .cmds to see available commands")
+    else:
+        embed.add_field(name="JOIN", value="YOU FAILED TO JOINED! FIND AN ADULT")
+        
+    return embed
+        
+    
+    
 
 
 def admin_check(ctx: commands.Context) -> discord.Embed | bool: # type: ignore

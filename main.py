@@ -1,5 +1,6 @@
 import discord, os, sqlite3
 import helper_commands as hc
+import database_commands as db
 # import fixture_commands as fc
 # import fun_commands as fun
 # import fut_commands as fut
@@ -27,6 +28,13 @@ bot = commands.Bot(
 # ~~~~ CREATE AND CONFIGURE DB ~~~~
 database: sqlite3.Connection = sqlite3.connect(database="./data/database.db")
 database_cursor: sqlite3.Cursor = database.cursor()
+
+# ~~~~ CREATE TABLES IF NOT EXIST & CHECK ~~~~
+db.create_members_table(cursor=database_cursor)
+db.create_fixtures_table(cursor=database_cursor)
+db.create_fut_table(cursor=database_cursor)
+db.create_predictions_table(cursor=database_cursor)
+db.check_if_table_exists(cursor=database_cursor)
 
 # ~~~~ BOT START EVENT MESSAGE ~~~~
 @bot.event
@@ -62,7 +70,7 @@ async def cmds(ctx: commands.Context) -> None: # type: ignore
 
 @bot.command() # type: ignore
 async def join(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.join(ctx=ctx) # type: ignore
+    embed: discord.Embed = hc.join(ctx=ctx, cursor=database_cursor) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fixtures ~~~~~~~~~~~~~~~~~~~~~~~~~~~
