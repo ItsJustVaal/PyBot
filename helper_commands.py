@@ -81,7 +81,7 @@ def my_card(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # t
 
 # ~~~~ HELPER FUNCTIONS ~~~~
 
-def admin_check(ctx: commands.Context) -> bool: # type: ignore
+def admin_check(ctx: commands.Context) ->  bool: # type: ignore
     if ctx.author.id != 123499749696471042:
         return False
     return True

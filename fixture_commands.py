@@ -19,6 +19,10 @@ from helper_commands import get_timestamp
 
 
 def set_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    # NOTE: Make a fixture cache so I dont have to call teh DB everytime 
+    # and so I can keep a structured format for the embeds when people call commands
+    # against the fixture list. If the list is updated in anyway make sure to update
+    # the cache as well.
     print(f"USER: {ctx.author} CALLED COMMAND: {ctx.invoked_subcommand}")
     
     embed = discord.Embed()

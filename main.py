@@ -30,13 +30,7 @@ database: sqlite3.Connection = sqlite3.connect(database="./data/database.db")
 database_cursor: sqlite3.Cursor = database.cursor()
 
 # ~~~~ CREATE TABLES IF NOT EXIST & CHECK ~~~~
-db.create_members_table(cursor=database_cursor)
-db.create_fixtures_table(cursor=database_cursor)
-db.create_fut_table(cursor=database_cursor)
-db.create_predictions_table(cursor=database_cursor)
-db.check_if_table_exists(cursor=database_cursor)
-
-    
+db.create_tables(cursor=database_cursor)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~ Every Command will call for an embed then reply to the user ~
@@ -44,6 +38,7 @@ db.check_if_table_exists(cursor=database_cursor)
 # ~ Going to be a lot of type: ignore due to missing types ~
 # ~ These are in camelCase to match the original ones ~
 
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ helpers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def test(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
@@ -51,7 +46,7 @@ async def test(ctx: commands.Context) -> None: # type: ignore
         embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
         await ctx.reply(embed=embed, ephemeral=True)
     else:
-        await ctx.reply(content="You are not an admin omegalol", ephemeral=True) # type: ignore
+        await ctx.reply(content="You are not an admin omegalol") # type: ignore
     
     
 @bot.command() # type: ignore
@@ -71,7 +66,8 @@ async def me(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.my_card(ctx=ctx, cursor=database_cursor) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fixtures ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fixtures ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def setFixtures(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
@@ -80,7 +76,7 @@ async def setFixtures(ctx: commands.Context) -> None: # type: ignore
         await ctx.reply(embed=embed, ephemeral=True)
         database.commit()
     else:
-        await ctx.reply(content="You are not an admin omegalol", ephemeral=True)
+        await ctx.reply(content="You are not an admin omegalol")
 
 
 @bot.command() # type: ignore
@@ -112,7 +108,8 @@ async def toggle(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ results ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def setResults(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -136,7 +133,8 @@ async def results(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fun ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fun ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def eball(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -147,8 +145,8 @@ async def meme(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ predictions ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ predictions ~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def predict(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -167,7 +165,8 @@ async def updatePred(ctx: commands.Context) -> None: # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ points ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def updatePoints(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -191,8 +190,8 @@ async def standings(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fut ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fut ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def goldpack(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -234,8 +233,8 @@ async def cards(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
-
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ money ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# endregion
+# region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ money ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def myMoney(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -261,6 +260,8 @@ async def money(ctx: commands.Context) -> None: # type: ignore
 
 for command in bot.commands:
         print(f"COMMAND LOADED: {command.name}")
+
+# endregion
 
 # ~~~~ BOT START EVENT MESSAGE ~~~~
 @bot.event

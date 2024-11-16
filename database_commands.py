@@ -1,5 +1,12 @@
 import sqlite3
+from typing import Any
 
+def create_tables(cursor: sqlite3.Cursor) -> None:
+    create_members_table(cursor=cursor)
+    create_fixtures_table(cursor=cursor)
+    create_fut_table(cursor=cursor)
+    create_predictions_table(cursor=cursor)
+    check_if_table_exists(cursor=cursor)
 
 def create_members_table(cursor: sqlite3.Cursor) -> None:
     cursor.execute("""CREATE TABLE IF NOT EXISTS members
@@ -18,7 +25,7 @@ def create_fut_table(cursor: sqlite3.Cursor) -> None:
                    (discord_id INTEGER PRIMARY KEY, cards TEXT, costs TEXT, pack_type TEXT, created_at TEXT, updated_at TEXT);""")
 
 def check_if_table_exists(cursor: sqlite3.Cursor) -> None:
-    listOfTables = cursor.execute(
+    listOfTables: list[Any] = cursor.execute(
         """SELECT * FROM sqlite_master WHERE type='table'; """).fetchall()
     
     if listOfTables == []:
