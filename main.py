@@ -1,4 +1,5 @@
 import discord, os, sqlite3
+from classtest import Futbot
 import helper_commands as hc
 import database_commands as db
 import fixture_commands as fc
@@ -31,6 +32,8 @@ database_cursor: sqlite3.Cursor = database.cursor()
 
 # ~~~~ CREATE TABLES IF NOT EXIST & CHECK ~~~~
 db.create_tables(cursor=database_cursor)
+
+pybot = Futbot(database_cursor, bot, database) # type: ignore
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~ Every Command will call for an embed then reply to the user ~
