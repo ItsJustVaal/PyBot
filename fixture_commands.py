@@ -102,3 +102,45 @@ def update_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Emb
     cursor.execute(f"UPDATE fixtures SET {message[2]} = '{message[4]}' WHERE gameweek = {message[1]} AND {message[2]} = '{message[3]}';")
     embed: discord.Embed = get_fixtures(ctx=ctx, cursor=cursor)
     return embed
+
+def delete_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
+    message: list[str] = ctx.message.content.split(sep=" ")
+    gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
+    embed = discord.Embed()
+    
+    if len(message) > 1:
+        if int(message[1]) <= gameweek:
+            gameweek = int(message[1])
+        else:
+            embed.add_field(name="FIXTURES", value="You passed in a gameweek that is in the future")
+            return embed
+    else:
+        print(f"No gameweek was passed in, leave as: {gameweek}")
+        
+    print(f"DELETE FROM fixtures WHERE gameweek = {message[1]} AND home_team = {message[2]} AND away_team = {message[3]}")
+    cursor.execute(f"DELETE FROM fixtures WHERE gameweek = {message[1]} AND home_team = '{message[2]}' AND away_team = '{message[3]}';")
+    embed: discord.Embed = get_fixtures(ctx=ctx, cursor=cursor)
+    return embed
+
+def add_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
+    message: list[str] = ctx.message.content.split(sep=" ")
+    gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
+    embed = discord.Embed()
+    
+    if len(message) > 1:
+        if int(message[1]) <= gameweek:
+            gameweek = int(message[1])
+        else:
+            embed.add_field(name="FIXTURES", value="You passed in a gameweek that is in the future")
+            return embed
+    else:
+        print(f"No gameweek was passed in, leave as: {gameweek}")
+        
+    print(f"INSERT INTO fixtures (gameweek, home_team, away_team) VALUES ({message[1]}, {message[2]}, {message[3]})")
+    cursor.execute(f"INSERT INTO fixtures (gameweek, home_team, away_team) VALUES ({message[1]}, '{message[2]}', '{message[3]}');")
+    embed: discord.Embed = get_fixtures(ctx=ctx, cursor=cursor)
+    return embed

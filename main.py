@@ -7,13 +7,14 @@ import fixture_commands as fc
 # import points_commands as pc
 # import prediction_commands as pred
 from discord.ext import commands
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 
 
 # ~~~~ LOAD ENV VARIABLES ~~~~
 load_dotenv()
 TOKEN: str | None = os.getenv(key="TOKEN")
 
+UNLOCKED = 0
 
 # ~~~~ CREATE AND CONFIGURE BOT ~~~~
 intents: discord.Intents = discord.Intents.default()
@@ -81,23 +82,34 @@ async def setFixtures(ctx: commands.Context) -> None: # type: ignore
 
 @bot.command() # type: ignore
 async def updateFixture(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = fc.update_fixture(ctx=ctx, cursor=database_cursor) # type: ignore
-    database.commit()
-    await ctx.reply(embed=embed, ephemeral=True)
-
+    check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
+    if check_creds == True:
+        embed: discord.Embed = fc.update_fixture(ctx=ctx, cursor=database_cursor) # type: ignore
+        database.commit()
+        await ctx.reply(embed=embed, ephemeral=True)
+    else:
+        await ctx.reply(content="You are not an admin omegalol")
 
 @bot.command() # type: ignore
 async def deleteFixture(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
-    await ctx.reply(embed=embed, ephemeral=True)
-
+    check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
+    if check_creds == True:
+        embed: discord.Embed = fc.delete_fixture(ctx=ctx, cursor=database_cursor) # type: ignore
+        database.commit()
+        await ctx.reply(embed=embed, ephemeral=True)
+    else:
+        await ctx.reply(content="You are not an admin omegalol")
 
 @bot.command() # type: ignore
 async def addFixture(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
-    await ctx.reply(embed=embed, ephemeral=True)
-
-
+    check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
+    if check_creds == True:
+        embed: discord.Embed = fc.add_fixture(ctx=ctx, cursor=database_cursor) # type: ignore
+        database.commit()
+        await ctx.reply(embed=embed, ephemeral=True)
+    else:
+        await ctx.reply(content="You are not an admin omegalol")
+        
 @bot.command() # type: ignore
 async def fixtures(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = fc.get_fixtures(ctx=ctx, cursor=database_cursor) # type: ignore
@@ -105,9 +117,20 @@ async def fixtures(ctx: commands.Context) -> None: # type: ignore
 
 
 @bot.command() # type: ignore
-async def toggle(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
-    await ctx.reply(embed=embed, ephemeral=True)
+async def lock(ctx: commands.Context) -> None: # type: ignore
+    global UNLOCKED
+    print(f"Lock called, current lock state: {UNLOCKED}")
+    check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
+    if check_creds == True:
+        if UNLOCKED == 0: # type: ignore
+            UNLOCKED = 1
+            await ctx.reply(content="Fixtures Locked")
+        else: # type: ignore
+            UNLOCKED = 0
+            await ctx.reply(content="Fixtures Unlocked")
+    else:
+        await ctx.reply(content="You are not an admin omegalol")
+        
 
 # endregion
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
