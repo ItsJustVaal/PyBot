@@ -31,15 +31,15 @@ def set_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed
     for fixture in fixtures_list[1:]:
         home, away = fixture.split(sep="-")
         time: str = get_timestamp()
-        print(f"FIXTURE SET - GAMEWEEK: {gameweek}, HOME: {home}, AWAY: {away}")
+        print(f"FIXTURE SET - Gameweek: {gameweek}, Home Team: {home}, Away Team: {away}")
         try:
             cursor.execute(f"INSERT INTO fixtures VALUES('{home}', '{away}', 0, 0, {gameweek},'{time}','{time}')")
         except Exception as e:
             print(f"FAILED TO ADD FIXTURES WITH ERROR: {e}")
     
     embed_fixture: str = '\n'.join(fixtures_list[1:])
-    embed.add_field(name="FIXTURES SET", value=f"""GAMEWEEK: {gameweek}
-                    HOME-AWAY:
+    embed.add_field(name="FIXTURES SET", value=f"""Gameweek: {gameweek}
+                    Home Team - Away Team:
                     {embed_fixture}""")
     return embed
     
@@ -74,7 +74,7 @@ def get_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed
         
     
     fixture_string: str = '\n'.join(fixture_list)
-    embed.add_field(name=f"FIXTURES FOR GAMEWEEK {gameweek}", value=f"""HOME - AWAY:
+    embed.add_field(name=f"FIXTURES FOR GAMEWEEK {gameweek}", value=f"""Home Team - Away Team:
                     {fixture_string}""")
     return embed
 

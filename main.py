@@ -1,4 +1,6 @@
 import discord, os, sqlite3
+
+from sqlalchemy import true
 import helper_commands as hc
 import database_commands as db
 import fixture_commands as fc
@@ -42,6 +44,9 @@ db.create_tables(cursor=database_cursor)
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ helpers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def test(ctx: commands.Context) -> None: # type: ignore
+    """
+    Tests if bot is live
+    """
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
     if check_creds == True:
         embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
@@ -69,7 +74,7 @@ async def me(ctx: commands.Context) -> None: # type: ignore
 
 # endregion
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ fixtures ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def setFixtures(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
     if check_creds == True:
@@ -80,7 +85,7 @@ async def setFixtures(ctx: commands.Context) -> None: # type: ignore
         await ctx.reply(content="You are not an admin omegalol")
 
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def updateFixture(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
     if check_creds == True:
@@ -90,7 +95,7 @@ async def updateFixture(ctx: commands.Context) -> None: # type: ignore
     else:
         await ctx.reply(content="You are not an admin omegalol")
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def deleteFixture(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
     if check_creds == True:
@@ -100,7 +105,7 @@ async def deleteFixture(ctx: commands.Context) -> None: # type: ignore
     else:
         await ctx.reply(content="You are not an admin omegalol")
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def addFixture(ctx: commands.Context) -> None: # type: ignore
     check_creds: bool = hc.admin_check(ctx=ctx) # type: ignore
     if check_creds == True:
@@ -116,7 +121,7 @@ async def fixtures(ctx: commands.Context) -> None: # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def lock(ctx: commands.Context) -> None: # type: ignore
     global UNLOCKED
     print(f"Lock called, current lock state: {UNLOCKED}")
@@ -134,19 +139,19 @@ async def lock(ctx: commands.Context) -> None: # type: ignore
 
 # endregion
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def setResults(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def updateResults(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
-@bot.command() # type: ignore
+@bot.command(hidden=True) # type: ignore
 async def deleteResults(ctx: commands.Context) -> None: # type: ignore
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)

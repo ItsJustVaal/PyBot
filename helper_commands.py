@@ -7,6 +7,8 @@ from discord.ext import commands
 
 # Returns embed to test if bot is functional
 def test(ctx: commands.Context) -> discord.Embed: # type: ignore
+    """Tests if bot is live and working"""
+    
     # Log Command Call
     print(f"USER: {ctx.author} CALLED COMMAND: {ctx.invoked_subcommand}")
 
