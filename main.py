@@ -1,5 +1,4 @@
 import discord, os, sqlite3
-from classtest import Futbot
 import helper_commands as hc
 import database_commands as db
 import fixture_commands as fc
@@ -32,8 +31,6 @@ database_cursor: sqlite3.Cursor = database.cursor()
 
 # ~~~~ CREATE TABLES IF NOT EXIST & CHECK ~~~~
 db.create_tables(cursor=database_cursor)
-
-pybot = Futbot(database_cursor, bot, database) # type: ignore
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~ Every Command will call for an embed then reply to the user ~
@@ -84,7 +81,8 @@ async def setFixtures(ctx: commands.Context) -> None: # type: ignore
 
 @bot.command() # type: ignore
 async def updateFixture(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
+    embed: discord.Embed = fc.update_fixture(ctx=ctx, cursor=database_cursor) # type: ignore
+    database.commit()
     await ctx.reply(embed=embed, ephemeral=True)
 
 

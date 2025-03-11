@@ -77,3 +77,28 @@ def get_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed
     embed.add_field(name=f"FIXTURES FOR GAMEWEEK {gameweek}", value=f"""HOME - AWAY:
                     {fixture_string}""")
     return embed
+
+def update_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
+    message = ctx.message.content.split(sep=" ")
+    gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
+    embed = discord.Embed()
+    
+    if len(message) > 1:
+        if int(message[1]) <= gameweek:
+            gameweek = int(message[1])
+        else:
+            embed.add_field(name="FIXTURES", value="You passed in a gameweek that is in the future")
+            return embed
+    else:
+        print(f"No gameweek was passed in, leave as: {gameweek}")
+    
+    #Message2 = home or away
+    #Message1 = gameweek
+    #Message3 = current entry
+    #Message4 = fixed entry 
+    print(f"UDPATE fixtures SET {message[2]} = {message[4]} WHERE gameweek = {message[1]} AND {message[2]} = {message[3]};")
+    cursor.execute(f"UPDATE fixtures SET {message[2]} = '{message[4]}' WHERE gameweek = {message[1]} AND {message[2]} = '{message[3]}';")
+    embed = get_fixtures(ctx, cursor)
+    return embed
