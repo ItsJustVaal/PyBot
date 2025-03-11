@@ -47,7 +47,7 @@ def set_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed
 def get_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
     print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
     
-    message = ctx.message.content.split(sep=" ")
+    message: list[str] = ctx.message.content.split(sep=" ")
     gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
     embed = discord.Embed()
     fixture_list: list[str] = []
@@ -81,7 +81,7 @@ def get_fixtures(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed
 def update_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
     print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
     
-    message = ctx.message.content.split(sep=" ")
+    message: list[str] = ctx.message.content.split(sep=" ")
     gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
     embed = discord.Embed()
     
@@ -100,5 +100,5 @@ def update_fixture(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Emb
     #Message4 = fixed entry 
     print(f"UDPATE fixtures SET {message[2]} = {message[4]} WHERE gameweek = {message[1]} AND {message[2]} = {message[3]};")
     cursor.execute(f"UPDATE fixtures SET {message[2]} = '{message[4]}' WHERE gameweek = {message[1]} AND {message[2]} = '{message[3]}';")
-    embed = get_fixtures(ctx, cursor)
+    embed: discord.Embed = get_fixtures(ctx=ctx, cursor=cursor)
     return embed
