@@ -7,7 +7,7 @@ import fixture_commands as fc
 # import fun_commands as fun
 # import fut_commands as fut
 # import points_commands as pc
-# import prediction_commands as pred
+import prediction_commands as pred
 from discord.ext import commands
 from dotenv import load_dotenv, set_key
 
@@ -16,6 +16,7 @@ from dotenv import load_dotenv, set_key
 load_dotenv()
 TOKEN: str | None = os.getenv(key="TOKEN")
 
+# Global fixtures lock variable
 UNLOCKED = 0
 
 # ~~~~ CREATE AND CONFIGURE BOT ~~~~
@@ -178,18 +179,24 @@ async def meme(ctx: commands.Context) -> None: # type: ignore
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ predictions ~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def predict(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
+    if UNLOCKED == 1:
+        await ctx.reply(content="LOCKED SORRY LOSER", ephemeral=True)
+        return
+    embed: discord.Embed = pred.predict(ctx=ctx, cursor=database_cursor) # type: ignore
+    database.commit()
     await ctx.reply(embed=embed, ephemeral=True)
 
 
 @bot.command() # type: ignore
 async def mypred(ctx: commands.Context) -> None: # type: ignore
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
+    embed: discord.Embed = pred.my_pred(ctx=ctx, cursor=database_cursor) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
 @bot.command() # type: ignore
 async def updatePred(ctx: commands.Context) -> None: # type: ignore
+    if UNLOCKED == 1:
+        await ctx.reply(content="LOCKED SORRY LOSER", ephemeral=True)
     embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 

@@ -63,6 +63,7 @@ def my_card(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # t
         user = user_check(ctx=ctx, cursor=cursor) # type: ignore
         if user == None:
             embed.add_field(name="MY CARD", value="YOU DONT EXIST, TYPE .JOIN")
+            
         else:
             print(user)
             embed.add_field(name="MY CARD", value=f"""
