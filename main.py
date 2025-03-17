@@ -1,6 +1,4 @@
 import discord, os, sqlite3
-
-from sqlalchemy import true
 import helper_commands as hc
 import database_commands as db
 import fixture_commands as fc
@@ -9,7 +7,7 @@ import fixture_commands as fc
 # import points_commands as pc
 import prediction_commands as pred
 from discord.ext import commands
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv
 
 
 # ~~~~ LOAD ENV VARIABLES ~~~~
@@ -35,6 +33,7 @@ database_cursor: sqlite3.Cursor = database.cursor()
 
 # ~~~~ CREATE TABLES IF NOT EXIST & CHECK ~~~~
 db.create_tables(cursor=database_cursor)
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~ Every Command will call for an embed then reply to the user ~
@@ -64,12 +63,18 @@ async def cmds(ctx: commands.Context) -> None: # type: ignore
 
 @bot.command() # type: ignore
 async def join(ctx: commands.Context) -> None: # type: ignore
+    """
+    Joins to use commands
+    """
     embed: discord.Embed = hc.join(ctx=ctx, cursor=database_cursor) # type: ignore
     database.commit()
     await ctx.reply(embed=embed, ephemeral=True)
     
 @bot.command() # type: ignore
 async def me(ctx: commands.Context) -> None: # type: ignore
+    """
+    Returns your user card
+    """
     embed: discord.Embed = hc.my_card(ctx=ctx, cursor=database_cursor) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
@@ -179,6 +184,10 @@ async def meme(ctx: commands.Context) -> None: # type: ignore
 # region ~~~~~~~~~~~~~~~~~~~~~~~~~~~ predictions ~~~~~~~~~~~~~~~~~~~~~~~~
 @bot.command() # type: ignore
 async def predict(ctx: commands.Context) -> None: # type: ignore
+    """
+    Predict for all set matches.
+    Does NOT update previous predictions
+    """
     if UNLOCKED == 1:
         await ctx.reply(content="LOCKED SORRY LOSER", ephemeral=True)
         return
@@ -189,15 +198,26 @@ async def predict(ctx: commands.Context) -> None: # type: ignore
 
 @bot.command() # type: ignore
 async def mypred(ctx: commands.Context) -> None: # type: ignore
+    """
+    Returns your current predictions
+    """
     embed: discord.Embed = pred.my_pred(ctx=ctx, cursor=database_cursor) # type: ignore
     await ctx.reply(embed=embed, ephemeral=True)
 
 
 @bot.command() # type: ignore
-async def updatePred(ctx: commands.Context) -> None: # type: ignore
+async def updatepred(ctx: commands.Context) -> None: # type: ignore
+    """ 
+    This will update one predicition. 
+    IT IS CASE SENSATIVE 
+    Use .fixtures to see what case to use IE. Arsenal not arsenal 
+    Enter with following format: .updatepred Home Away Score1-Score2 
+    """
     if UNLOCKED == 1:
         await ctx.reply(content="LOCKED SORRY LOSER", ephemeral=True)
-    embed: discord.Embed = hc.test(ctx=ctx) # type: ignore
+        return
+    embed: discord.Embed = pred.update_pred(ctx=ctx,cursor=database_cursor) # type: ignore
+    database.commit()
     await ctx.reply(embed=embed, ephemeral=True)
 
 

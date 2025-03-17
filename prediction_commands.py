@@ -2,12 +2,10 @@ import discord
 import sqlite3
 from discord.ext import commands
 from helper_commands import get_timestamp, user_check
-# Predict
-# My Pred
-# Update specific
-# My pred for game week x
 
 def predict(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
     embed = discord.Embed()
     user = user_check(ctx=ctx, cursor=cursor) # type: ignore
     if user == None:
@@ -43,6 +41,8 @@ def predict(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # t
     return my_pred(ctx=ctx, cursor=cursor)
 
 def my_pred(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
     embed = discord.Embed()
     user = user_check(ctx=ctx, cursor=cursor) # type: ignore
     if user == None:
@@ -62,8 +62,35 @@ def my_pred(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # t
 # Will need to check both home and away
 # teams along with gameweek to update preds
 def update_pred(ctx: commands.Context, cursor: sqlite3.Cursor) -> discord.Embed: # type: ignore
+    print(f"USER: {ctx.author} CALLED COMMAND: {ctx.command}")
+    
     embed = discord.Embed()
+    message: list[str] = ctx.message.content.split(sep=" ")[1:]
+    gameweek = cursor.execute("SELECT gameweek FROM fixtures ORDER BY gameweek DESC;").fetchone()[0]
     user = user_check(ctx=ctx, cursor=cursor) # type: ignore
+    scores = message[2].split("-")
+    
     if user == None:
         embed.add_field(name="MY CARD", value="YOU DONT EXIST, TYPE .JOIN")
-    pass
+    
+    
+    fixture_list = []
+    fixtures = cursor.execute(f"SELECT * FROM fixtures WHERE gameweek = {gameweek}").fetchall()
+    for fixture in fixtures:
+            fixture_list.append(f"{fixture[0]} - {fixture[1]}")
+    checker = f"{message[0]} - {message[1]}"
+    
+    if checker in fixture_list:    
+        try:
+            cursor.execute(f"SELECT * FROM predictions WHERE discord_id = {ctx.author.id} AND home_team = '{message[0]}' AND away_team = '{message[1]}';")
+        except Exception as e:
+            return embed.add_field(name="ERROR", value=f"Failed to find prediction with error {e}, check your capitalization and format. Use .help updatepred")
+    else:
+        return embed.add_field(name="ERROR", value="Could not find fixture in fixture list, check your capitalization and format. Use .help updatepred")
+    
+    try:
+        cursor.execute(f"UPDATE predictions SET home_score = {scores[0]}, away_score = {scores[1]} WHERE discord_id = {ctx.author.id} AND home_team = '{message[0]}' AND away_team = '{message[1]}' AND gameweek = {gameweek};")
+    except Exception as e:
+        return embed.add_field(name="ERROR", value=f"Failed to update prediction with error {e}, check your capitalization and format. Use .help updatepred")     
+    
+    return my_pred(ctx, cursor)
